@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nhà hàng NhaHangDB - Demo gợi ý món ăn</title>
+<meta name="description" content="Website minh họa đồ án cơ sở: quản lý nhà hàng và gợi ý món ăn theo yêu cầu của thực khách.">
+<style>
+:root{--dk:#2B1D16;--red:#C0392B;--saf:#E8A33D;--tint:#F7EDE9;--line:#E6D8D1;--mut:#6B5A50;--ok:#2E7D4F}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;color:var(--dk);background:#fff;line-height:1.55}
+h1,h2,h3{font-family:Cambria,Georgia,"Times New Roman",serif;line-height:1.2;margin:0}
+a{color:inherit}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header.nav{position:sticky;top:0;z-index:10;background:rgba(43,29,22,.96);color:#fff}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:56px;gap:16px}
+.brand{font-family:Cambria,Georgia,serif;font-weight:700;font-size:18px;color:var(--saf);text-decoration:none}
+.nav nav{display:flex;gap:18px;font-size:15px}
+.nav nav a{text-decoration:none;opacity:.9}.nav nav a:hover{color:var(--saf);opacity:1}
+.hero{background:var(--dk);color:#fff;padding:64px 0 72px;border-bottom:6px solid var(--red);position:relative}
+.hero:after{content:"";position:absolute;left:0;right:0;bottom:-10px;height:4px;background:var(--saf)}
+.hero small{letter-spacing:.2em;color:var(--saf);font-weight:600;text-transform:uppercase;font-size:13px}
+.hero h1{font-size:clamp(30px,5vw,48px);margin:10px 0 14px;max-width:760px}
+.hero p{max-width:640px;color:#E9DCD4;font-size:17px;margin:0 0 24px}
+.btn{display:inline-block;background:var(--red);color:#fff;border:0;border-radius:8px;padding:11px 20px;font-size:16px;font-weight:600;cursor:pointer;text-decoration:none}
+.btn:hover{background:#a93226}.btn.alt{background:transparent;border:2px solid var(--saf);color:var(--saf);margin-left:10px}
+.btn.alt:hover{background:var(--saf);color:var(--dk)}
+section{padding:56px 0;scroll-margin-top:56px}
+section h2{font-size:30px;margin-bottom:8px}
+.lead{color:var(--mut);max-width:680px;margin:0 0 28px}
+.panel{display:grid;grid-template-columns:340px 1fr;gap:28px;align-items:start}
+@media(max-width:820px){.panel{grid-template-columns:1fr}.nav nav{gap:12px;font-size:14px}}
+.card{background:var(--tint);border-radius:12px;padding:20px}
+label{display:block;font-weight:600;font-size:14px;margin:14px 0 6px}
+label:first-child{margin-top:0}
+select,input[type=text],input[type=tel],input[type=number],input[type=datetime-local]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:15px;background:#fff;color:var(--dk);font-family:inherit}
+input[type=range]{width:100%;accent-color:var(--red)}
+.seg{display:flex;gap:8px}
+.seg input{position:absolute;opacity:0}
+.seg span{display:block;text-align:center;padding:9px 0;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;font-weight:600}
+.seg label{flex:1;margin:0}
+.seg input:checked+span{background:var(--red);border-color:var(--red);color:#fff}
+.seg input:focus-visible+span,.btn:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--saf);outline-offset:2px}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{border:1px solid var(--red);color:var(--red);background:#fff;border-radius:999px;padding:6px 12px;font-size:14px;font-weight:600;cursor:pointer}
+.chip:hover{background:var(--red);color:#fff}
+.val{float:right;font-weight:600;color:var(--red)}
+.res{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.res li{display:grid;grid-template-columns:42px 1fr auto;gap:14px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff}
+.rank{width:42px;height:42px;border-radius:50%;background:var(--dk);color:var(--saf);display:grid;place-items:center;font-weight:700;font-family:Cambria,Georgia,serif;font-size:18px}
+.res li:first-child .rank{background:var(--red);color:#fff}
+.res b{font-size:17px}
+.meta{color:var(--mut);font-size:14px}
+.score{text-align:right;font-variant-numeric:tabular-nums}
+.score strong{display:block;font-size:18px;color:var(--red)}
+.bar{height:6px;border-radius:4px;background:var(--line);margin-top:6px;width:110px;margin-left:auto;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--saf)}
+.note{background:#FFF7E8;border-left:4px solid var(--saf);padding:10px 14px;border-radius:6px;font-size:14px;color:#5b4630;margin-top:16px}
+.empty{padding:22px;text-align:center;color:var(--red);border:1px dashed var(--red);border-radius:12px;font-weight:600}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-right:6px;vertical-align:middle}
+.tag.chay{background:#E3F3E8;color:var(--ok)}.tag.man{background:#FBE4E0;color:var(--red)}.tag.al{background:#FFF1D6;color:#8a5a00}
+.filters{display:flex;gap:8px;margin-bottom:18px}
+.filters .chip.on{background:var(--red);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.dish{border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff}
+.dish h3{font-size:18px;margin:8px 0 6px}
+.dish .price{font-weight:700;color:var(--red);font-size:18px;margin-top:8px}
+.pep{letter-spacing:2px;color:var(--red)}.pep.off{color:#d9cdc6}
+.alt-bg{background:var(--tint)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+@media(max-width:820px){.cols{grid-template-columns:1fr}}
+pre{background:var(--dk);color:#F3E6DC;border-radius:10px;padding:14px;overflow:auto;font-size:13px;margin:0;min-height:120px;white-space:pre-wrap}
+.status{font-weight:700;margin:0 0 8px}.status.ok{color:var(--ok)}.status.err{color:var(--red)}
+footer{background:var(--dk);color:#CDBBB0;padding:28px 0;font-size:14px;border-top:6px solid var(--red)}
+footer strong{color:var(--saf)}
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="#">NhaHangDB</a>
+  <nav><a href="#goi-y">Gợi ý món</a><a href="#thuc-don">Thực đơn</a><a href="#dat-ban">Đặt bàn</a></nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <small>Đồ án cơ sở · Nhóm 5</small>
+  <h1>Gợi ý món ăn đúng yêu cầu của từng thực khách</h1>
+  <p>Trang minh họa cho hệ thống quản lý nhà hàng: chọn chế độ ăn, dị ứng, độ cay và ngân sách, hệ thống lọc ràng buộc rồi xếp hạng món bằng độ tương đồng cosine.</p>
+  <a class="btn" href="#goi-y">Thử gợi ý ngay</a><a class="btn alt" href="#dat-ban">Đặt bàn</a>
+</div></div>
+
+<section id="goi-y"><div class="wrap">
+  <h2>Gợi ý món ăn</h2>
+  <p class="lead">Thuật toán chạy ngay trên trình duyệt với dữ liệu 11 món trong tệp mon_an.csv của đồ án. Bấm khách mẫu để xem lại kết quả trong báo cáo.</p>
+  <div class="panel">
+    <form class="card" id="f" onsubmit="return false">
+      <div class="presets" aria-label="Khách mẫu">
+        <button type="button" class="chip" data-p="1">Khách 1</button>
+        <button type="button" class="chip" data-p="2">Khách 2 (chay)</button>
+        <button type="button" class="chip" data-p="3">Khách 3 (dị ứng)</button>
+      </div>
+      <label>Chế độ ăn</label>
+      <div class="seg"><label><input type="radio" name="diet" value="Man" checked><span>Mặn</span></label><label><input type="radio" name="diet" value="Chay"><span>Chay</span></label></div>
+      <label for="al">Dị ứng</label>
+      <select id="al"><option value="Khong">Không</option><option value="Hai san">Hải sản</option></select>
+      <label for="cay">Độ cay ưa thích <span class="val" id="cayv">2</span></label>
+      <input type="range" id="cay" min="0" max="5" step="1" value="2">
+      <label for="bud">Ngân sách mỗi món <span class="val" id="budv">200.000 đ</span></label>
+      <input type="range" id="bud" min="40000" max="300000" step="10000" value="200000">
+      <label for="k">Số món gợi ý</label>
+      <select id="k"><option>3</option><option>5</option></select>
+    </form>
+    <div>
+      <ol class="res" id="out" aria-live="polite"></ol>
+      <div class="note" id="info"></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="thuc-don" class="alt-bg"><div class="wrap">
+  <h2>Thực đơn</h2>
+  <p class="lead">Các món lấy từ dữ liệu thử nghiệm của đồ án.</p>
+  <div class="filters" id="flt"><button class="chip on" data-f="all">Tất cả</button><button class="chip" data-f="1">Món chay</button><button class="chip" data-f="0">Món mặn</button></div>
+  <div class="grid" id="menu"></div>
+</div></section>
+
+<section id="dat-ban"><div class="wrap">
+  <h2>Đặt bàn</h2>
+  <p class="lead">Biểu mẫu mô phỏng cách website gọi RESTful API: kiểm tra bàn còn trống và đủ chỗ rồi trả mã 201 hoặc 409.</p>
+  <div class="cols">
+    <form class="card" id="bf">
+      <label for="n">Họ tên</label><input type="text" id="n" required placeholder="Nguyễn Văn A">
+      <label for="p">Số điện thoại</label><input type="tel" id="p" required pattern="[0-9]{9,11}" placeholder="0905123456">
+      <label for="t">Thời gian</label><input type="datetime-local" id="t" required>
+      <label for="sk">Số khách</label><input type="number" id="sk" min="1" max="12" value="2" required>
+      <label for="b">Bàn trống</label><select id="b"></select>
+      <p style="margin:16px 0 0"><button class="btn" type="submit">Gửi yêu cầu đặt bàn</button></p>
+    </form>
+    <div>
+      <p class="status" id="st">Chưa gửi yêu cầu.</p>
+      <pre id="js" aria-live="polite">POST /api/v1/dat-ban</pre>
+      <div class="note">Đây là bản mô phỏng chạy trên trình duyệt, chưa gọi API thật. Khi có máy chủ, chỉ cần thay phần mô phỏng bằng lệnh fetch tới /api/v1/dat-ban.</div>
+    </div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <strong>Đồ án cơ sở · Nhóm 5</strong> · Thiết kế CSDL hệ thống quản lý nhà hàng và thuật toán khuyến nghị món ăn.<br>
+  Trang minh họa tạo bằng AI; dữ liệu và số liệu lấy từ báo cáo đồ án.
+</div></footer>
+
+<script>
+/*LOGIC-START*/
+const MON=[
+{id:1,ten:"Súp nấm bào ngư",chay:1,cay:0,calo:120,gia:45000,al:"Khong"},
+{id:2,ten:"Gỏi ngó sen tôm thịt",chay:0,cay:2,calo:250,gia:75000,al:"Hai san"},
+{id:3,ten:"Chả giò chay",chay:1,cay:0,calo:200,gia:40000,al:"Khong"},
+{id:4,ten:"Mực lăn bột chiên xù",chay:0,cay:1,calo:350,gia:85000,al:"Hai san"},
+{id:5,ten:"Salad hạt hũ chay",chay:1,cay:0,calo:150,gia:50000,al:"Khong"},
+{id:7,ten:"Bò lúc lắc",chay:0,cay:2,calo:450,gia:120000,al:"Khong"},
+{id:8,ten:"Cơm chiên hải sản",chay:0,cay:1,calo:500,gia:90000,al:"Hai san"},
+{id:9,ten:"Nấm xào chay",chay:1,cay:0,calo:180,gia:60000,al:"Khong"},
+{id:13,ten:"Bò nướng sa tế",chay:0,cay:4,calo:480,gia:130000,al:"Khong"},
+{id:15,ten:"Lẩu thái hải sản",chay:0,cay:3,calo:650,gia:290000,al:"Hai san"},
+{id:16,ten:"Lẩu nấm chay",chay:1,cay:0,calo:300,gia:200000,al:"Khong"}];
+function recommend(p,k){
+  let d=MON.filter(m=>(p.diet!=="Chay"||m.chay===1)&&(p.al==="Khong"||m.al!==p.al)&&m.gia<=p.bud);
+  if(!d.length)return{list:[],n:0};
+  const f=["cay","calo","gia"],mn=f.map(c=>Math.min(...d.map(m=>m[c]))),mx=f.map(c=>Math.max(...d.map(m=>m[c])));
+  const sc=(v,i)=>{const r=mx[i]-mn[i];return (v-mn[i])*(r===0?1:1/r)};
+  const u=[p.cay,300,p.bud*0.5].map(sc);
+  const cos=(a,b)=>{const dot=a.reduce((s,x,i)=>s+x*b[i],0),na=Math.hypot(...a),nb=Math.hypot(...b);return na===0||nb===0?0:dot/(na*nb)};
+  const list=d.map(m=>({m,s:cos(u,f.map((c,i)=>sc(m[c],i)))})).sort((a,b)=>Math.abs(b.s-a.s)>1e-9?b.s-a.s:b.m.id-a.m.id).slice(0,k); /* hòa điểm: ưu tiên mã món lớn hơn, khớp kết quả chạy Python trong báo cáo */
+  return{list,n:d.length};
+}
+/*LOGIC-END*/
+const $=s=>document.querySelector(s),vnd=n=>n.toLocaleString("vi-VN")+" đ";
+const pep=n=>'<span class="pep" title="Độ cay '+n+'/5">'+"●".repeat(n)+'<span class="pep off">'+"●".repeat(5-n)+"</span></span>";
+const tags=m=>'<span class="tag '+(m.chay?"chay":"man")+'">'+(m.chay?"Chay":"Mặn")+"</span>"+(m.al!=="Khong"?'<span class="tag al">Có hải sản</span>':"");
+const PRE={1:{diet:"Man",al:"Khong",cay:3,bud:200000},2:{diet:"Chay",al:"Khong",cay:0,bud:150000},3:{diet:"Man",al:"Hai san",cay:2,bud:300000}};
+function profile(){return{diet:document.querySelector('input[name=diet]:checked').value,al:$("#al").value,cay:+$("#cay").value,bud:+$("#bud").value}}
+function render(){
+  const p=profile(),k=+$("#k").value,r=recommend(p,k);
+  $("#cayv").textContent=p.cay;$("#budv").textContent=vnd(p.bud);
+  $("#out").innerHTML=r.list.length?r.list.map((x,i)=>'<li><div class="rank">'+(i+1)+'</div><div><b>'+x.m.ten+'</b><div class="meta">'+tags(x.m)+pep(x.m.cay)+" · "+x.m.calo+" kcal · "+vnd(x.m.gia)+'</div></div><div class="score"><strong>'+x.s.toFixed(6)+'</strong><span class="meta">điểm tương đồng</span><div class="bar"><i style="width:'+Math.round(x.s*100)+'%"></i></div></div></li>').join(""):'<li class="empty" style="display:block">Không tìm thấy món ăn phù hợp với các ràng buộc cứng!</li>';
+  $("#info").textContent="Sau bước lọc còn "+r.n+" món ứng viên. Điểm là độ tương đồng cosine giữa hồ sơ khách và vector [độ cay, calo, giá] đã chuẩn hóa min-max; chỉ dùng để xếp hạng.";
+}
+function setP(n){const p=PRE[n];document.querySelector('input[name=diet][value='+p.diet+']').checked=true;$("#al").value=p.al;$("#cay").value=p.cay;$("#bud").value=p.bud;render()}
+document.querySelectorAll(".presets .chip").forEach(b=>b.onclick=()=>setP(b.dataset.p));
+["#f","#k"].forEach(s=>{$(s).addEventListener("input",render);$(s).addEventListener("change",render)});
+function menu(f){$("#menu").innerHTML=MON.filter(m=>f==="all"||String(m.chay)===f).map(m=>'<article class="dish">'+tags(m)+"<h3>"+m.ten+'</h3><div class="meta">'+pep(m.cay)+" · "+m.calo+' kcal</div><div class="price">'+vnd(m.gia)+"</div></article>").join("")}
+document.querySelectorAll("#flt .chip").forEach(b=>b.onclick=()=>{document.querySelectorAll("#flt .chip").forEach(x=>x.classList.remove("on"));b.classList.add("on");menu(b.dataset.f)});
+const BAN=[{id:3,kv:"Tầng 1",cho:2},{id:5,kv:"Tầng 2",cho:4},{id:7,kv:"Tầng 2",cho:2},{id:8,kv:"Sân vườn",cho:10},{id:9,kv:"Sân vườn",cho:4},{id:10,kv:"VIP",cho:6}];
+$("#b").innerHTML=BAN.map(b=>'<option value="'+b.id+'">Bàn '+b.id+" · "+b.kv+" · "+b.cho+" chỗ</option>").join("");
+let seq=0;
+$("#bf").addEventListener("submit",e=>{
+  e.preventDefault();
+  const b=BAN.find(x=>x.id===+$("#b").value),body={ho_ten:$("#n").value.trim(),sdt:$("#p").value,ma_ban:b.id,thoi_gian:$("#t").value,so_khach:+$("#sk").value};
+  const ok=body.so_khach<=b.cho,st=$("#st");
+  st.className="status "+(ok?"ok":"err");
+  st.textContent=ok?"201 Created: đặt bàn thành công":"409 Conflict: bàn không đủ chỗ cho "+body.so_khach+" khách";
+  $("#js").textContent="POST /api/v1/dat-ban\n"+JSON.stringify(body,null,2)+"\n\n"+(ok?JSON.stringify({maDatBan:++seq,trangThai:"Đã xác nhận"},null,2):JSON.stringify({detail:"Bàn không phù hợp hoặc đã được đặt"},null,2));
+});
+menu("all");setP(3);
+</script>
+</body>
+</html>
